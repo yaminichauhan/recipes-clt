@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import RecipeGrid from './RecipeGrid';
+import { getRecipes } from '../../services/recipesService';
 
 export default class Recipes extends Component {
 
@@ -8,36 +9,25 @@ export default class Recipes extends Component {
         this.state = {
             data: false
         }
+        this.setRecipesList =  this.setRecipesList.bind(this);
+    }
+
+    setRecipesList = recipes => {
+        this.setState({
+            data: recipes
+        })
     }
 
     componentDidMount() {
-        fetch('http://localhost:8585/api/recipes/getAll', {
-            "method": "GET",
-            "headers": {
-                "content-type": "application/json",
-                "accept": "application/json",
-                "access-control-allow-origin": "*"
-            },
-            "mode": "cors",
-        })
-            .then(resp => {
-                return resp.json()
-            })
-            .then(response => {
-                this.setState({
-                    data: response.data
-                });
-            })
-            .catch(err => {
-                console.log(err);
-            });
+        getRecipes(this.setRecipesList);
     }
 
     render() {
+        const { data } = this.state;
         return (
-            this.state.data && <div>
+            data && <div>
                 <br></br>
-                <RecipeGrid recipes={this.state.data}/>
+                <RecipeGrid recipes={data}/>
             </div>
         );
     }
